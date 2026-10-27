@@ -10,7 +10,7 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <button class="mobile-menu icon-button" id="mobileFilters" type="button" aria-label="Open map filters">☰</button>
+      <button class="mobile-menu icon-button" id="mobileFilters" type="button" aria-label="Open map filters" aria-controls="filters" aria-expanded="false">☰</button>
       <div class="brand-mark" aria-hidden="true">✦</div>
       <div class="brand"><span class="eyebrow">ENSHROUDED · INTERACTIVE ATLAS</span><h1>Embervale <span>Atlas</span></h1></div>
       <div class="top-actions"><span class="data-pill" id="totalStatus">Map data</span><a href="https://pindrop.gg/enshrouded/map" target="_blank" rel="noopener noreferrer">Original map <span aria-hidden="true">↗</span></a></div>
@@ -40,6 +40,7 @@
             <div class="popup-actions"><button type="button" id="popupCopy">Copy coordinates</button><button type="button" id="popupCenter">Center here</button></div>
           </div>
           <div class="map-controls"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button><span></span><button id="home" type="button" aria-label="Fit entire map">⌂</button></div>
+          <button id="mobileFilterFab" class="mobile-filter-fab" type="button" aria-controls="filters" aria-expanded="false">☷ <span>Filters</span></button>
           <div class="map-zoom" id="zoomLabel">100%</div>
         </div>
       </section>

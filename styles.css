@@ -30,4 +30,34 @@
 .map-controls{background:#201c19e8;border-color:#8b674b}
 .hover-tip{position:absolute;z-index:2;pointer-events:none;max-width:240px;padding:7px 10px;border:1px solid #b48456;border-radius:7px;background:#221c18ef;color:#fff2d9;box-shadow:0 6px 16px #0009;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hover-tip[hidden]{display:none}
+.map-stage::before{content:'';position:absolute;inset:-48px;background:url('assets/map.png') center/cover no-repeat;filter:blur(52px) saturate(.75) brightness(.45);opacity:.8;pointer-events:none}
+.map-stage canvas{position:relative;z-index:1}
+.map-gradient{z-index:2}
+.map-controls,.map-zoom,.mobile-filter-fab{z-index:3}
+.hover-tip{z-index:4}
+.map-popup{z-index:5}
+.mobile-filter-fab{display:none}
 @media(max-width:800px){.topbar{height:62px}.sidebar{top:62px}.mobile-backdrop{top:62px}}
+@media(max-width:800px){
+  .icon-button{width:44px;height:44px;flex:none;font-size:22px}
+  .topbar{padding:0 10px;gap:7px}
+  .top-actions{display:none}
+  .brand h1{font-size:18px}
+  .sidebar{width:min(400px,94vw);padding:18px 14px calc(25px + env(safe-area-inset-bottom));z-index:5}
+  .mobile-backdrop{z-index:4}
+  .group-body{grid-template-columns:1fr;gap:5px}
+  .group-tools{grid-column:1}
+  .layer-row{min-height:44px;padding:7px 10px;gap:10px}
+  .layer-icon{width:24px;height:24px;font-size:14px}
+  .layer-name{font-size:13px}
+  .layer-count{font-size:11px}
+  .quick-filters button{min-height:40px;padding:8px 13px;font-size:12px}
+  .map-controls{bottom:calc(68px + env(safe-area-inset-bottom))}
+  .map-controls button{width:44px;height:44px}
+  .mobile-filter-fab{display:flex;align-items:center;gap:8px;position:absolute;left:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:2;background:#2b211bcf;border:1px solid #c2925b;color:#fff1d7;border-radius:24px;padding:11px 16px;font-size:14px;font-weight:650;box-shadow:0 8px 22px #0009}
+  .map-popup{bottom:calc(83px + env(safe-area-inset-bottom))!important;max-height:50dvh}
+  .popup-actions button{min-height:44px}
+  .popup-close{width:36px;height:36px}
+  .map-zoom{bottom:calc(18px + env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){.brand-mark{display:none}.eyebrow{font-size:7px}.brand h1{font-size:17px}.sidebar{width:96vw}}

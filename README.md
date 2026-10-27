@@ -8,7 +8,9 @@ A buildless, static Enshrouded map for GitHub Pages. Open `index.html` directly 
 - Search results that center the map and open location details
 - Compact category markers, hover labels, a selected marker highlight, and cluster cards with zoom controls
 - Category presets, collapsible groups, and individual layer filters
-- A regional opening view, drag, wheel zoom, touch pan, full-map reset, coordinate copying, and a mobile filter drawer
+- A regional opening view, drag, wheel zoom, two-finger pinch, double-tap zoom, full-map reset, coordinate copying, and a mobile filter drawer
+
+The phone layout opens with five landmark layers for legibility. Use **Filters** to enable chests, ores, enemies, and the remaining layers. Zooming out stops at a full-map overview; tap a group to inspect its locations.
 
 ## Deploy to GitHub Pages
 
