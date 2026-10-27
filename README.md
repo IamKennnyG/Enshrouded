@@ -1,9 +1,21 @@
-# Enshrouded Map Guide
+# Embervale Atlas
 
-Static GitHub Pages project. It works from `file://` and from GitHub Pages because `data.js` contains an inline data fallback; `data.json` remains available for normal HTTP hosting.
+A buildless, static Enshrouded map for GitHub Pages. Open `index.html` directly or serve the folder with any HTTP server. The map and marker dataset are bundled locally; no API key or build command is required.
 
-Features: zoom and pan, marker-layer filters, search, marker popups, loot list, responsive mobile filter drawer.
+## Features
 
-Deploy: push the repository, then open Settings > Pages > Deploy from branch > main > root. No build step is required.
+- 9,658 mapped locations across 41 layers
+- Search results that center the map and open location details
+- Tappable markers and cluster cards with zoom controls
+- Category presets, collapsible groups, and individual layer filters
+- Drag, wheel zoom, touch pan, map reset, coordinate copying, and a mobile filter drawer
 
-Source: https://pindrop.gg/enshrouded/map
+## Deploy to GitHub Pages
+
+Push these files to the repository, then set **Settings → Pages → Deploy from a branch → main → /(root)**. Keep `data.js` and `assets/map.png` beside the application files.
+
+## Data limits
+
+The provided source data contains coordinates and descriptions for some locations. It does not identify guaranteed item drops for each chest. The detail card says so when a container has no item-level record. Traversal layers with zero locations are shown disabled.
+
+Source map: <https://pindrop.gg/enshrouded/map>. Enshrouded is owned by Keen Games.
