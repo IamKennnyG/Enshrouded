@@ -6,9 +6,9 @@ A buildless, static Enshrouded map for GitHub Pages. Open `index.html` directly 
 
 - 9,658 mapped locations across 41 layers
 - Search results that center the map and open location details
-- Tappable markers and cluster cards with zoom controls
+- Compact category markers, hover labels, a selected marker highlight, and cluster cards with zoom controls
 - Category presets, collapsible groups, and individual layer filters
-- Drag, wheel zoom, touch pan, map reset, coordinate copying, and a mobile filter drawer
+- A regional opening view, drag, wheel zoom, touch pan, full-map reset, coordinate copying, and a mobile filter drawer
 
 ## Deploy to GitHub Pages
 
