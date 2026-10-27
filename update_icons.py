@@ -5,6 +5,7 @@ root=Path.cwd(); data=json.loads((root/'data.json').read_text(encoding='utf8'));
 server=json.loads((Path(r'C:\Users\adyap\Documents\Codex\2026-10-27\https-pindrop-gg-enshrouded-map-https')/'work'/'server_full.json').read_text(encoding='utf8'))
 ore={'ore_iron':'iron.webp','ore_copper':'copper.webp','ore_coal':'coal.webp','ore_sulfur':'sulfur.webp','ore_amber':'amber.webp','ore_salt':'salt.webp','ore_clay':'clay.webp','ore_silver':'silver.webp','ore_tin':'tin.webp','ore_gold':'gold.webp','ore_celestium':'celestium.webp'}
 manual={'Ancient_Spire':'Ancient_Spire.png','Flame_Shrine':'Flame_Shrine.png','Sun_Temple':'Sun_Temple.png','Ancient_Vault':'Ancient_Vault.png','Village':'Village.png','Camp':'Camp.png','Mine':'Mine.png'}
+emoji={'wood-chest':'▣','silver-chest':'◇','gold-chest':'◆','shell-chest':'◈','locked-wood-chest':'▣','locked-silver-chest':'◇','locked-gold-chest':'◆','wood-sarcophagus':'▤','silver-sarcophagus':'▥','gold-sarcophagus':'▦','mining-container':'⚒','boss':'☠','spawn-scavenger':'⚔','spawn-vukah':'♞','spawn-drak':'♨','spawn-hollow':'☽','Enemy_Camp':'⚔','Shroud_Lair':'☁','Hollow_Halls':'☽','Ancient_Spire':'✦','Flame_Shrine':'✧','Sun_Temple':'☀','Ancient_Vault':'⬟','Village':'⌂','Camp':'♜','Mine':'⚒','teleport':'✦','grapple-point':'↗','jump-pad':'↑','updraft':'⇧'}
 def source_for(layer):
     key=layer['id']
     if key in ore:return '/enshrouded/markers/ores/'+ore[key]
@@ -16,6 +17,7 @@ def source_for(layer):
     return '/enshrouded/map/icons/'+fallback if fallback else None
 for layer in data['layers']:
     src=source_for(layer)
+    layer['emoji']=emoji.get(layer['id'],'•')
     if not src:continue
     name=Path(src).name; target=icon_dir/name; layer['icon']='https://pindrop.gg'+src
     if not target.exists():
