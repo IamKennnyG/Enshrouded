@@ -3,36 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#10171c">
+  <meta name="theme-color" content="#171d1c">
+  <meta name="description" content="Explore Embervale with an interactive Enshrouded map of landmarks, chests, ore, enemies and travel points.">
   <title>Embervale Atlas — Enshrouded interactive map</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="refined.css">
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <button class="mobile-menu icon-button" id="mobileFilters" type="button" aria-label="Open map filters" aria-controls="filters" aria-expanded="false">☰</button>
-      <div class="brand-mark" aria-hidden="true">✦</div>
+      <div class="brand-mark" aria-hidden="true"><span>✦</span></div>
       <div class="brand"><span class="eyebrow">ENSHROUDED · INTERACTIVE ATLAS</span><h1>Embervale <span>Atlas</span></h1></div>
       <div class="top-actions"><span class="data-pill" id="totalStatus">Map data</span><a href="https://pindrop.gg/enshrouded/map" target="_blank" rel="noopener noreferrer">Original map <span aria-hidden="true">↗</span></a></div>
     </header>
     <main class="layout">
       <div class="mobile-backdrop" id="mobileBackdrop"></div>
       <aside class="sidebar" id="filters" aria-label="Map filters">
-        <div class="side-top"><div><span class="overline">EXPLORE EMBERVALE</span><h2>Find your way</h2></div><button class="close-mobile icon-button" id="closeFilters" type="button" aria-label="Close map filters">×</button></div>
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="side-top"><div><span class="overline">THE FIELD GUIDE</span><h2>Explore the realm<span class="title-spark" aria-hidden="true"> ✧</span></h2><p>Trace the places, treasures and resources of Embervale.</p></div><button class="close-mobile icon-button" id="closeFilters" type="button" aria-label="Close map filters">×</button></div>
         <div class="search-wrap"><label for="search">Search markers and places</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="search" type="search" autocomplete="off" placeholder="Try Longkeep, iron, gold chest…"><kbd>/</kbd></div></div>
         <div class="search-results" id="searchResults" hidden></div>
-        <div class="filter-summary"><span id="filterStatus">Loading layers…</span><button id="resetFilters" type="button">Recommended</button></div>
-        <div class="quick-filters" id="quickFilters" aria-label="Quick filters"></div>
+        <div class="filter-summary"><span id="filterStatus">Loading layers…</span><button id="resetFilters" type="button">Reset view ↺</button></div>
+        <div class="quick-filters" id="quickFilters" aria-label="Map layer collections"></div>
         <div class="section-title"><span>MAP LAYERS</span><div><button id="all" type="button">All</button><button id="none" type="button">None</button></div></div>
         <div id="groups" class="groups"></div>
         <div class="sidebar-foot"><span>Map and marker data attributed to the <a href="https://pindrop.gg/enshrouded/map" target="_blank" rel="noopener noreferrer">source atlas</a>.</span></div>
       </aside>
       <section class="map-panel" aria-label="Interactive map">
-        <div class="map-top"><span class="live-dot"></span><span id="status">Loading map…</span><span class="map-tip">Drag to move · Scroll to zoom · Tap a marker</span></div>
+        <div class="map-top"><span class="live-dot"></span><span id="status">Loading map…</span><span class="map-tip">Drag to explore <i></i> Scroll to zoom <i></i> Select a marker</span></div>
         <div id="map" class="map-stage"><canvas id="canvas" aria-label="Map of Embervale"></canvas>
           <div class="map-gradient"></div>
           <div class="hover-tip" id="hoverTip" hidden></div>
-          <div class="map-label"><span>EMBERVALE</span><small>Interactive field map</small></div>
+          <div class="map-label"><span class="map-label-kicker">THE SHROUDED LANDS</span><span>Embervale</span><small>Explore the world, one discovery at a time.</small></div>
+          <div class="map-compass" aria-hidden="true"><span>✦</span><small>N</small></div>
           <div id="popup" class="map-popup" role="dialog" aria-label="Marker details" hidden>
             <button class="popup-close" id="popupClose" type="button" aria-label="Close marker details">×</button>
             <div class="popup-kind" id="popupKind"></div><h2 id="popupTitle"></h2><p id="popupDescription"></p>
@@ -40,7 +44,7 @@
             <div class="popup-actions"><button type="button" id="popupCopy">Copy coordinates</button><button type="button" id="popupCenter">Center here</button></div>
           </div>
           <div class="map-controls"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button><span></span><button id="home" type="button" aria-label="Fit entire map">⌂</button></div>
-          <button id="mobileFilterFab" class="mobile-filter-fab" type="button" aria-controls="filters" aria-expanded="false">☷ <span>Filters</span></button>
+          <button id="mobileFilterFab" class="mobile-filter-fab" type="button" aria-controls="filters" aria-expanded="false"><span aria-hidden="true">☷</span> Explore layers</button>
           <div class="map-zoom" id="zoomLabel">100%</div>
         </div>
       </section>
