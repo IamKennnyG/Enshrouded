@@ -14,6 +14,8 @@ const categoryGroups = [
 const curatedIds=innerWidth<800?['Ancient_Spire','Ancient_Vault','Sun_Temple','Mine']:['Ancient_Spire','Flame_Shrine','Ancient_Vault','Village','Mine'];
 const presets = [
   {label:'Discover',icon:'✧',note:'A curated path through Embervale',ids:curatedIds},
+  {label:'High tier chests',icon:'◆',note:'Gold & locked gold chest locations',ids:['gold-chest','locked-gold-chest'],tier:'gold'},
+  {label:'High tier loot',icon:'▦',note:'Gold & silver sarcophagus sites',ids:['gold-sarcophagus','silver-sarcophagus'],tier:'gold'},
   {label:'Chests',icon:'▣',note:'Wood, silver, gold & locked',ids:categoryGroups[2][1].filter(id=>id.includes('chest'))},
   {label:'Loot sites',icon:'◈',note:'Sarcophagi & ancient containers',ids:categoryGroups[2][1].filter(id=>!id.includes('chest'))},
   {label:'Enemies',icon:'⚔',note:'Bosses, camps & creature spawns',ids:['boss','Enemy_Camp','spawn-scavenger','spawn-vukah','spawn-drak','spawn-hollow']},
@@ -26,6 +28,11 @@ const view = {active:new Set(recommendedIds),zoom:1,x:0,y:0,width:0,height:0,dpr
 const layerById = new Map((data?.layers || []).map(layer => [layer.id,layer]));
 const displayName = marker => marker.name && marker.name !== marker.layer.id ? marker.name : marker.layer.name.replace(/s$/,'');
 const plainDetail = detail => (detail || '').replace(/\[\[([^\]|]+\|)?([^\]]+)\]\]/g,'$2').replace(/\s+/g,' ').trim();
+function fallbackDetail(layer){
+  if(/^(?:locked-)?gold-chest$|^gold-sarcophagus$/.test(layer.id))return 'Gold-tier container location. The source map does not identify its exact contents or guarantee a drop.';
+  if(layer.id==='silver-sarcophagus')return 'Silver sarcophagus location. The source map does not identify its exact contents or guarantee a drop.';
+  return /chest|sarcophag|container/i.test(layer.id)?'The source data locates this container, but does not identify its exact contents.':'This location has no additional description in the source data.';
+}
 const matching = (marker,layer,query) => `${marker.name} ${layer.name} ${plainDetail(marker.detail)}`.toLowerCase().includes(query);
 
 function sizeCanvas(){view.width=stage.clientWidth;view.height=stage.clientHeight;view.dpr=Math.min(devicePixelRatio||1,innerWidth<800?1.5:2);canvas.width=Math.round(view.width*view.dpr);canvas.height=Math.round(view.height*view.dpr);ctx.setTransform(view.dpr,0,0,view.dpr,0,0);draw();}
@@ -44,15 +51,17 @@ function drawSymbol(hit){
   let layer=items[0].layer;
   if(cluster){const totals=new Map();for(const item of items)totals.set(item.layer,(totals.get(item.layer)||0)+1);for(const [candidate,count] of totals)if(count>(totals.get(layer)||0))layer=candidate;}
   const selected=view.selected?.marker===items[0].marker;
+  const highTier=!cluster&&/^(?:locked-)?gold-chest$|^(?:gold|silver)-sarcophagus$/.test(layer.id);
   ctx.save();
   ctx.translate(sx,sy);
-  ctx.shadowColor=selected?'#ffe2a2bb':'#07100ddd';ctx.shadowBlur=selected?17:8;ctx.shadowOffsetY=2;
+  ctx.shadowColor=selected?'#ffe2a2bb':highTier?'#f7c36ba8':'#07100ddd';ctx.shadowBlur=selected?17:highTier?13:8;ctx.shadowOffsetY=2;
   ctx.beginPath();
   if(cluster){ctx.arc(0,0,15,0,Math.PI*2);ctx.fillStyle='#1c2c26';ctx.strokeStyle=layer.color||'#e5bd75';ctx.lineWidth=2;}
   else if(layer.id.startsWith('ore_')||layer.id==='Mine'){for(let i=0;i<6;i++){const angle=Math.PI/3*i-Math.PI/6;i?ctx.lineTo(Math.cos(angle)*11,Math.sin(angle)*11):ctx.moveTo(Math.cos(angle)*11,Math.sin(angle)*11);}ctx.closePath();ctx.fillStyle=layer.color;ctx.strokeStyle='#26302a';ctx.lineWidth=1.5;}
   else if(/chest|sarcophag|container/i.test(layer.id)){ctx.rect(-10,-10,20,20);ctx.fillStyle=layer.color;ctx.strokeStyle='#26302a';ctx.lineWidth=1.5;}
   else{ctx.moveTo(0,-13);ctx.lineTo(12,0);ctx.lineTo(0,13);ctx.lineTo(-12,0);ctx.closePath();ctx.fillStyle=layer.color;ctx.strokeStyle='#26302a';ctx.lineWidth=1.5;}
   ctx.fill();ctx.stroke();ctx.shadowColor='transparent';
+  if(highTier){ctx.beginPath();ctx.arc(0,0,16,0,Math.PI*2);ctx.strokeStyle='#ffe2a0b5';ctx.lineWidth=1.2;ctx.stroke();}
   if(selected){ctx.beginPath();ctx.arc(0,0,19,0,Math.PI*2);ctx.strokeStyle='#fff2bc';ctx.lineWidth=2;ctx.stroke();}
   ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=cluster?'#fff4da':'#15211e';ctx.font=cluster?'700 11px system-ui':'700 14px Segoe UI Symbol,system-ui';ctx.fillText(cluster?(items.length>99?'99+':String(items.length)):(layer.emoji||'✦'),0,1);
   ctx.restore();
@@ -68,7 +77,8 @@ function draw(){
   if(sourceWidth>0&&sourceHeight>0)ctx.drawImage(data.map.image,sourceX,sourceY,sourceWidth,sourceHeight,view.x+sourceX*view.zoom,view.y+sourceY*view.zoom,sourceWidth*view.zoom,sourceHeight*view.zoom);
   const markers=visibleMarkers();
   const overview=view.zoom<=minimumZoom()*1.12;
-  const cell=overview?124:view.zoom<.55?68:view.zoom<1?38:28;
+  const baseCell=overview?124:view.zoom<.55?68:view.zoom<1?38:28;
+  const cell=view.zoom<1?Math.max(baseCell,markers.length>800?92:markers.length>220?70:baseCell):baseCell;
   const buckets=new Map();
   for(const item of markers){const key=`${Math.floor(item.sx/cell)}:${Math.floor(item.sy/cell)}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(item);}
   view.hits=[];
@@ -80,7 +90,7 @@ function draw(){
 function pick(x,y){for(let i=view.hits.length-1;i>=0;i--){const hit=view.hits[i];if(Math.hypot(hit.sx-x,hit.sy-y)<=hit.radius)return hit;}return null;}
 function handleMapTap(x,y){const hit=pick(x,y);if(!hit){hidePopup();return;}if(hit.items.length>1){view.cluster={items:hit.items,x:(hit.sx-view.x)/view.zoom,y:(hit.sy-view.y)/view.zoom};view.selected=null;renderPopup();return;}view.cluster=null;view.selected={layer:hit.items[0].layer,marker:hit.items[0].marker};renderPopup();}
 function positionPopup(){const anchor=view.selected?.marker||view.cluster;if(!anchor)return;const element=$('#popup');const sx=view.x+anchor.x*view.zoom,sy=view.y+anchor.y*view.zoom;const width=element.offsetWidth||310,height=element.offsetHeight||210;element.style.left=`${Math.max(12,Math.min(view.width-width-12,sx+23))}px`;element.style.top=`${Math.max(12,Math.min(view.height-height-12,sy-height/2))}px`;}
-function renderPopup(){const kind=$('#popupKind');kind.replaceChildren();const glyph=document.createElement('span');glyph.className='glyph';glyph.textContent=view.cluster?'✦':view.selected.layer.emoji||'✦';glyph.style.setProperty('--icon-color',view.cluster?'#e9bd70':view.selected.layer.color||'#e9bd70');const name=document.createElement('span');name.textContent=view.cluster?'LOCATION GROUP':view.selected.layer.name;kind.append(glyph,name);if(view.cluster){const items=view.cluster.items;$('#popupTitle').textContent=`${items.length} nearby locations`;const summary=items.slice(0,5).map(item=>displayName({layer:item.layer,...item.marker})).join(' · ');$('#popupDescription').textContent=summary+(items.length>5?` · +${items.length-5} more`:'');$('#popupCoords').textContent='Zoom in to inspect each location';$('#popupCopy').hidden=true;$('#popupCenter').textContent='Zoom into group';}else{const {layer,marker}=view.selected;$('#popupTitle').textContent=displayName({layer,...marker});const description=plainDetail(marker.detail);$('#popupDescription').textContent=description||(/chest|sarcophag|container/i.test(layer.id)?'The source data locates this container, but does not identify its exact contents.':'This location has no additional description in the source data.');$('#popupCoords').textContent=`WORLD COORDINATES  ${Math.round(marker.worldX)}, ${Math.round(marker.worldY)}`;$('#popupCopy').hidden=false;$('#popupCenter').textContent='Center here';}$('#popup').hidden=false;positionPopup();draw();}
+function renderPopup(){const kind=$('#popupKind');kind.replaceChildren();const glyph=document.createElement('span');glyph.className='glyph';glyph.textContent=view.cluster?'✦':view.selected.layer.emoji||'✦';glyph.style.setProperty('--icon-color',view.cluster?'#e9bd70':view.selected.layer.color||'#e9bd70');const name=document.createElement('span');name.textContent=view.cluster?'LOCATION GROUP':view.selected.layer.name;kind.append(glyph,name);if(view.cluster){const items=view.cluster.items;$('#popupTitle').textContent=`${items.length} nearby locations`;const summary=items.slice(0,5).map(item=>displayName({layer:item.layer,...item.marker})).join(' · ');$('#popupDescription').textContent=summary+(items.length>5?` · +${items.length-5} more`:'');$('#popupCoords').textContent='Zoom in to inspect each location';$('#popupCopy').hidden=true;$('#popupCenter').textContent='Zoom into group';}else{const {layer,marker}=view.selected;$('#popupTitle').textContent=displayName({layer,...marker});const description=plainDetail(marker.detail);$('#popupDescription').textContent=description||fallbackDetail(layer);$('#popupCoords').textContent=`WORLD COORDINATES  ${Math.round(marker.worldX)}, ${Math.round(marker.worldY)}`;$('#popupCopy').hidden=false;$('#popupCenter').textContent='Center here';}$('#popup').hidden=false;positionPopup();draw();}
 function hidePopup(){view.selected=null;view.cluster=null;$('#popup').hidden=true;draw();}
 function updateFilters(){const root=$('#groups');root.replaceChildren();for(const [title,ids] of categoryGroups){const layers=ids.map(id=>layerById.get(id)).filter(Boolean);const section=document.createElement('section');section.className='filter-group'+(view.openGroups.has(title)?'':' collapsed');const head=document.createElement('button');head.className='group-head';head.type='button';head.innerHTML='<span class="chevron">▾</span><span class="group-name"></span><small></small>';head.querySelector('.group-name').textContent=title;head.querySelector('small').textContent=`${layers.filter(layer=>view.active.has(layer.id)).length}/${layers.length}`;head.onclick=()=>{view.openGroups.has(title)?view.openGroups.delete(title):view.openGroups.add(title);section.classList.toggle('collapsed');};section.append(head);const body=document.createElement('div');body.className='group-body';const tools=document.createElement('div');tools.className='group-tools';for(const action of ['All','None']){const button=document.createElement('button');button.type='button';button.textContent=action;button.onclick=()=>{for(const layer of layers)action==='All'&&layer.count?view.active.add(layer.id):view.active.delete(layer.id);changed();};tools.append(button);}body.append(tools);for(const layer of layers){const row=document.createElement('label');row.className='layer-row'+(layer.count?'':' empty-layer');const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=view.active.has(layer.id);checkbox.disabled=!layer.count;checkbox.onchange=()=>{checkbox.checked?view.active.add(layer.id):view.active.delete(layer.id);changed();};const icon=document.createElement('span');icon.className='layer-icon';icon.style.setProperty('--icon-color',layer.color||'#d5b16e');icon.textContent=layer.emoji||'✦';const label=document.createElement('span');label.className='layer-name';label.textContent=layer.name;const count=document.createElement('span');count.className='layer-count';count.textContent=layer.count.toLocaleString();row.append(checkbox,icon,label,count);body.append(row);}section.append(body);root.append(section);}$('#filterStatus').textContent=`${view.active.size} of ${data.layers.length} layers selected`;updatePresets();}
 function updatePresets(){document.querySelectorAll('.quick-filters button').forEach((button,index)=>{const ids=presets[index].ids.filter(id=>layerById.get(id)?.count);button.classList.toggle('active',ids.length===view.active.size&&ids.every(id=>view.active.has(id)));});}
@@ -114,7 +124,7 @@ if(data){
   for(const [index,preset] of presets.entries()){
     const button=document.createElement('button');
     button.type='button';
-    button.className='preset-tile'+(index===0?' feature':'');
+    button.className='preset-tile'+(index===0?' feature':'')+(preset.tier?' rare':'');
     button.setAttribute('aria-label',`Show ${preset.label} locations`);
     const icon=document.createElement('span');
     icon.className='preset-icon';
