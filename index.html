@@ -1,17 +1,8 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Enshrouded Embervale Map</title><link rel="stylesheet" href="styles.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enshrouded Embervale Map</title><link rel="stylesheet" href="styles.css"></head>
 <body>
-<header class="topbar"><div><span class="eyebrow">EMBERVALE SURVIVAL GUIDE</span><h1>Enshrouded Marker Map</h1></div><a href="https://pindrop.gg/enshrouded/map" target="_blank" rel="noreferrer">Source map ↗</a></header>
-<main class="layout"><button class="mobile-toggle" id="toggle" aria-controls="sidebar" aria-expanded="false">☰ Filters and loot</button><aside class="sidebar" id="sidebar">
-<label class="search"><span>Search markers</span><input id="search" placeholder="iron, gold chest, boss..."></label>
-<div class="actions"><button id="fit">Fit map</button><button id="clear">Clear</button><button id="all">All</button></div>
-<section><h2>Marker layers</h2><div id="layers" class="layers"></div></section>
-<section class="legend"><h2>Selected marker</h2><div id="details">Click a marker on the map.</div></section>
-<section><h2>Loot items</h2><div id="loot" class="loot"></div></section>
-</aside><section class="map-shell"><div class="map-toolbar"><span id="status">Loading map...</span><span>Scroll to zoom · drag to pan · click a marker</span></div><div id="map"><canvas id="canvas"></canvas></div></section></main>
+<header class="topbar"><button id="mobileFilters" class="icon-button" aria-label="Open filters">☰</button><div class="brand"><span class="eyebrow">PINDROP STYLE MAP GUIDE</span><h1>Enshrouded <em>Embervale</em> Map</h1></div><div class="top-actions"><a href="https://pindrop.gg/enshrouded/map" target="_blank" rel="noreferrer">Source map ↗</a></div></header>
+<main class="app"><aside class="filters" id="filters"><div class="filter-head"><div><strong>Map filters</strong><small id="filterStatus">0 categories</small></div><button id="closeFilters" class="icon-button" aria-label="Close filters">×</button></div><label class="search"><span>Search the map</span><input id="search" placeholder="Longkeep, Iron Ore, Wolf…"></label><div class="filter-actions"><button id="all">All</button><button id="none">None</button><button id="fit">Reset view</button></div><div id="groups"></div><section class="selection"><h3>Selected marker</h3><div id="details">Click a marker to inspect it.</div></section><section class="loot-section"><h3>Loot items</h3><div id="loot" class="loot"></div></section></aside><section class="map-area"><div class="map-toolbar"><span id="status">Loading map…</span><span class="hint">Scroll to zoom · drag to pan · click markers</span></div><div id="map"><canvas id="canvas"></canvas><div class="map-controls"><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="home" aria-label="Reset view">⌂</button></div></div></section></main>
 <script src="data.js"></script><script src="app.js"></script>
 </body></html>
